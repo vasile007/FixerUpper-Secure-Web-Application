@@ -1,149 +1,325 @@
-# 🔐 FixerUpper — Secure E-Commerce Web Application
+# 🔐 FixerUpper — Secure Web Application
 
-FixerUpper is a full-stack e-commerce web application built with **PHP and MySQL**, with a strong focus on secure web development.
+A security-focused web application built with **PHP and MySQL** to demonstrate practical implementation of secure software development principles and protection against common web application vulnerabilities.
 
-The application provides a complete shopping workflow including product browsing, user registration and authentication, shopping cart management, checkout, order processing and account management.
+FixerUpper uses a functional e-commerce environment to demonstrate how security controls can be integrated throughout an application's authentication, session management, form handling and database access layers.
 
-Security controls are integrated throughout the application to protect against common web vulnerabilities including **SQL Injection, Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), password theft and session hijacking**.
-
----
-
-## 🚀 Features
-
-### 🛒 E-Commerce
-
-- Product catalogue
-- Shopping cart management
-- User registration
-- Secure login and logout
-- Customer account management
-- Checkout process
-- Delivery information
-- Order confirmation
-- Order storage in MySQL
-- Automatic session timeout
-
-### 🔐 Security
-
-The application implements multiple security controls rather than relying only on client-side validation.
-
-#### Password Security
-User passwords are protected using PHP's password hashing and verification mechanisms instead of being stored as plain text.
-
-#### SQL Injection Protection
-Database operations use **PDO prepared statements**, preventing user input from being directly interpreted as SQL commands.
-
-#### Cross-Site Scripting (XSS) Protection
-User-controlled output is escaped and sanitised before being rendered in the browser.
-
-#### CSRF Protection
-Sensitive forms use **CSRF tokens** that are generated and validated server-side before requests are processed.
-
-#### Session Security
-The application includes:
-
-- Secure session configuration
-- HttpOnly cookies
-- SameSite cookie protection
-- Session ID regeneration after authentication
-- Automatic session timeout
-- Protection against session fixation/hijacking
-
-#### Server-Side Validation
-Important input is validated on the server rather than relying exclusively on browser-side validation.
+The project implements defences against **SQL Injection, Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), insecure password storage, session fixation and session hijacking**.
 
 ---
 
-## 🛠️ Technology Stack
+## 🛡️ Security Overview
 
-| Technology | Purpose |
-|---|---|
-| PHP | Backend application logic |
-| MySQL | Relational database |
-| PDO | Secure database access |
-| HTML5 | Application structure |
-| CSS3 | Styling |
-| Bootstrap 5 | Responsive user interface |
-| JavaScript | Client-side interaction and validation |
-| Apache | Local web server |
-| XAMPP | Local development environment |
+Security is a core part of the application architecture rather than an additional layer added after development.
+
+The application implements:
+
+- 🔑 Secure password hashing and verification
+- 💉 SQL Injection protection using PDO prepared statements
+- 🧼 XSS mitigation through output escaping and input handling
+- 🛡️ CSRF token generation and server-side validation
+- 🍪 HttpOnly and SameSite session cookies
+- 🔄 Session ID regeneration after authentication
+- ⏱️ Automatic session timeout after inactivity
+- ✅ Server-side input validation
+- 🔒 Secure authentication and logout handling
 
 ---
 
-## 🏗️ Application Architecture
+## 💻 Application Preview
+
+The security controls are implemented within a functional e-commerce application containing product browsing, authentication, shopping cart functionality, checkout and order processing.
+
+![FixerUpper Product Catalogue](screenshots/products.png)
+
+---
+
+# 🔐 Security Implementation
+
+## 1. SQL Injection Protection
+
+Database access is performed using **PDO prepared statements**, separating SQL commands from user-supplied data.
+
+Authentication attempts containing SQL injection payloads are treated as ordinary input rather than executable SQL.
+
+Example test:
 
 ```text
-                  ┌─────────────────┐
-                  │      User       │
-                  └────────┬────────┘
-                           │
-                           ▼
-                ┌─────────────────────┐
-                │   HTML / Bootstrap  │
-                │     JavaScript      │
-                └─────────┬───────────┘
-                          │
-                          ▼
-                 ┌──────────────────┐
-                 │    PHP Backend   │
-                 │                  │
-                 │ Authentication   │
-                 │ Shopping Cart    │
-                 │ Checkout         │
-                 │ Orders           │
-                 │ Security Logic   │
-                 └────────┬─────────┘
-                          │
-                     PDO Prepared
-                     Statements
-                          │
-                          ▼
-                 ┌──────────────────┐
-                 │      MySQL       │
-                 │                  │
-                 │ Users            │
-                 │ Products         │
-                 │ Orders           │
-                 └──────────────────┘
+admin' OR '1'='1
 ```
 
+The application rejects the malicious input rather than allowing authentication bypass.
+
+![SQL Injection Protection](screenshots/sql-injection-protection.png)
+
+### Implementation
+
+```php
+$stmt = db()->prepare(
+    'SELECT id, fullname, email, password
+     FROM users
+     WHERE email = :email
+     LIMIT 1'
+);
+
+$stmt->execute(['email' => $email]);
+$user = $stmt->fetch();
+```
+
+Using parameterised queries prevents user-controlled values from modifying the structure of the SQL statement.
+
 ---
 
-## 🛡️ Security Architecture
+## 2. Secure Authentication
+
+The authentication flow combines:
+
+- Email validation
+- Server-side input validation
+- CSRF verification
+- PDO prepared statements
+- Password hash verification
+- Secure session creation
+
+Passwords are verified using PHP's `password_verify()` rather than comparing or storing plaintext credentials.
+
+![Secure Authentication Implementation](screenshots/secure-authentication.png)
+
+Authentication flow:
 
 ```text
-User Request
+Login Request
+     │
+     ▼
+CSRF Validation
      │
      ▼
 Input Validation
      │
-     ├────────────► CSRF Token Validation
+     ▼
+PDO Prepared Query
      │
      ▼
-Authentication / Session Validation
+User Lookup
      │
      ▼
-PHP Application Logic
+Password Verification
      │
      ▼
-PDO Prepared Statement
+Session ID Regeneration
      │
      ▼
-MySQL Database
-     │
-     ▼
-Output Escaping
-     │
-     ▼
-Browser
+Authenticated Session
 ```
 
 ---
 
-## 📁 Project Structure
+## 3. Strong Password Validation
+
+Account registration applies password requirements before an account can be created.
+
+Validation is performed in the browser for immediate feedback and enforced again by the PHP backend.
+
+![Password Validation](screenshots/password-validation.png)
+
+Passwords are stored using secure password hashing rather than plaintext storage.
+
+This reduces the impact of credential exposure if database contents are compromised.
+
+---
+
+## 4. CSRF Protection
+
+State-changing forms are protected using **Cross-Site Request Forgery tokens**.
+
+The application generates a cryptographically random token:
+
+```php
+function csrf_token(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return (string) $_SESSION['csrf_token'];
+}
+```
+
+The token is inserted into forms as a hidden value and validated when requests reach the server.
+
+```php
+function verify_csrf_token(?string $token): bool
+{
+    return is_string($token)
+        && isset($_SESSION['csrf_token'])
+        && hash_equals(
+            (string) $_SESSION['csrf_token'],
+            $token
+        );
+}
+```
+
+![CSRF Protection](screenshots/csrf-protection.png)
+
+This helps prevent malicious websites from submitting authenticated requests on behalf of a logged-in user.
+
+---
+
+## 5. Cross-Site Scripting (XSS) Protection
+
+User-controlled values are escaped before being rendered into HTML.
+
+The application uses a helper function for safe output:
+
+```php
+function h(?string $value): string
+{
+    return htmlspecialchars(
+        (string) $value,
+        ENT_QUOTES | ENT_SUBSTITUTE,
+        'UTF-8'
+    );
+}
+```
+
+This reduces the risk of malicious input being interpreted as executable browser content.
+
+---
+
+## 6. Secure Session Management
+
+PHP sessions are configured with additional security controls:
+
+```php
+ini_set('session.use_strict_mode', '1');
+ini_set('session.use_only_cookies', '1');
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_samesite', 'Lax');
+```
+
+When HTTPS is available, the application can also enable the `Secure` cookie attribute.
+
+After successful authentication:
+
+```php
+session_regenerate_id(true);
+```
+
+Regenerating the session identifier helps protect against **session fixation attacks**.
+
+The application also tracks user activity and expires inactive sessions after **30 minutes**.
+
+---
+
+## 7. Session Timeout
+
+Inactive authenticated sessions are automatically terminated.
+
+The application informs the user when their session has expired and requires authentication again.
+
+This limits the amount of time an abandoned authenticated browser session remains usable.
+
+---
+
+# 🏗️ Security Architecture
 
 ```text
-fixerupper-secure-ecommerce/
+                         USER
+                           │
+                           ▼
+                 ┌─────────────────┐
+                 │  Browser / UI   │
+                 └────────┬────────┘
+                          │
+                    HTTP Request
+                          │
+                          ▼
+              ┌──────────────────────┐
+              │   Input Validation   │
+              │   CSRF Validation    │
+              │   XSS Protection     │
+              └──────────┬───────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │    Authentication    │
+              │   Session Security   │
+              │ Password Verification│
+              └──────────┬───────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │    PHP Backend       │
+              │                      │
+              │ Products             │
+              │ Accounts             │
+              │ Cart                 │
+              │ Checkout             │
+              │ Orders               │
+              └──────────┬───────────┘
+                         │
+                  PDO Prepared
+                    Statements
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │        MySQL         │
+              │                      │
+              │ Users                │
+              │ Products             │
+              │ Orders               │
+              │ Order Items          │
+              └──────────────────────┘
+```
+
+---
+
+# 🛒 Application Functionality
+
+The e-commerce functionality provides a realistic environment in which the security controls are applied.
+
+### Product Catalogue
+
+Users can browse available products and product categories.
+
+### Shopping Cart
+
+Products can be added, removed and updated using a session-based shopping cart.
+
+### User Accounts
+
+Customers can register and authenticate before accessing protected functionality.
+
+### Checkout
+
+Authenticated customers can enter delivery information, review their order and submit it for processing.
+
+### Order Processing
+
+Completed orders and their associated items are stored in the relational database.
+
+---
+
+# 🛠️ Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| **PHP** | Backend logic and security controls |
+| **MySQL** | Relational data persistence |
+| **PDO** | Parameterised database access |
+| **HTML5** | Application structure |
+| **CSS3** | Styling |
+| **Bootstrap 5** | Responsive interface |
+| **JavaScript** | Client-side interaction and validation |
+| **Apache** | Web server |
+| **XAMPP** | Local development environment |
+
+---
+
+# 📂 Project Structure
+
+```text
+FixerUpper/
 │
 ├── index.php
 ├── products.php
@@ -161,16 +337,40 @@ fixerupper-secure-ecommerce/
 ├── .gitignore
 ├── README.md
 │
-└── includes/
-    ├── header.php
-    └── footer.php
+├── includes/
+│   ├── header.php
+│   └── footer.php
+│
+└── screenshots/
+    ├── products.png
+    ├── password-validation.png
+    ├── sql-injection-protection.png
+    ├── secure-authentication.png
+    └── csrf-protection.png
 ```
 
 ---
 
-## ⚙️ Database Configuration
+# 🗄️ Database
 
-Database configuration can be supplied using environment variables:
+The relational database stores:
+
+```text
+users
+products
+orders
+order_items
+```
+
+Relationships between orders and order items allow individual products belonging to each customer order to be recorded separately.
+
+Database operations involving user-controlled data are executed using PDO prepared statements.
+
+---
+
+# ⚙️ Configuration
+
+Database configuration can be supplied through environment variables:
 
 ```env
 DB_HOST=127.0.0.1
@@ -180,157 +380,104 @@ DB_USER=root
 DB_PASS=
 ```
 
-See `.env.example` for the expected configuration.
+An `.env.example` file documents the required configuration.
 
-Do not commit production database credentials or `.env` files to the repository.
+Real credentials should never be committed to source control.
 
 ---
 
-## 🗄️ Database Setup
+# 🚀 Running Locally
 
-1. Start Apache and MySQL.
+### 1. Clone the repository
 
-2. Create a MySQL database:
+```bash
+git clone https://github.com/vasile007/FixerUpper-Secure-Web-Application.git
+```
+
+### 2. Configure the environment
+
+Configure the database connection using the values documented in:
+
+```text
+.env.example
+```
+
+### 3. Create the database
+
+Create:
 
 ```sql
 CREATE DATABASE fixerupper_db;
 ```
 
-3. Import:
+Then import the supplied database schema.
 
-```text
-database.sql
-```
+### 4. Start the application
 
-4. Configure the database connection using the environment variables described above.
+Run Apache and MySQL through XAMPP and open the application through the local Apache server.
 
 ---
 
-## ▶️ Running Locally
+# 🧪 Security Testing
 
-Clone the repository:
+The application was tested against security-related scenarios including:
 
-```bash
-git clone https://github.com/vasile007/fixerupper-secure-ecommerce.git
-```
-
-Move the project into your XAMPP `htdocs` directory and start:
-
-- Apache
-- MySQL
-
-Then open the application through your local Apache server.
-
----
-
-## 🔑 Authentication Flow
-
-```text
-Registration
-     │
-     ▼
-Server-Side Validation
-     │
-     ▼
-Password Hashing
-     │
-     ▼
-MySQL Database
-     │
-     ▼
-Login
-     │
-     ▼
-Password Verification
-     │
-     ▼
-Session ID Regeneration
-     │
-     ▼
-Authenticated Session
-```
+| Security Area | Test |
+|---|---|
+| SQL Injection | Authentication bypass payload rejected |
+| Authentication | Invalid credentials rejected |
+| Password Security | Password requirements enforced |
+| Password Storage | Passwords stored as hashes |
+| CSRF | Forms protected using security tokens |
+| XSS | User-controlled output escaped |
+| Sessions | Session ID regenerated after authentication |
+| Session Lifetime | Inactive sessions expire automatically |
+| Cookies | HttpOnly and SameSite protections configured |
 
 ---
 
-## 🛒 Shopping Flow
+# 🎯 What This Project Demonstrates
 
-```text
-Browse Products
-      │
-      ▼
-Add to Cart
-      │
-      ▼
-Review Cart
-      │
-      ▼
-Authentication
-      │
-      ▼
-Checkout
-      │
-      ▼
-Delivery Details
-      │
-      ▼
-Order Confirmation
-      │
-      ▼
-Order Stored in MySQL
-```
+This project demonstrates practical experience with:
 
----
-
-## 📸 Screenshots
-
-Screenshots can be added here to demonstrate:
-
-- Home page and product catalogue
-- Shopping cart
-- Registration and login
-- Checkout
-- Order confirmation
-- Account page
-- Security validation
-
----
-
-## 🔒 Security Principles Demonstrated
-
-This project demonstrates practical implementation of several secure development principles:
-
-- Password hashing
-- Secure authentication
+- **Secure Software Development**
+- **OWASP-style web application security controls**
+- PHP backend development
+- Authentication and authorisation concepts
+- Password security
 - SQL Injection prevention
-- XSS mitigation
-- CSRF protection
+- Cross-Site Scripting mitigation
+- Cross-Site Request Forgery protection
 - Secure session management
-- Cookie security
+- Relational database design
 - Server-side validation
-- Session ID regeneration
-- Separation of database configuration from application logic
+- Security testing
+- Full-stack web development
+
+The project demonstrates how security controls can be incorporated throughout the **software development lifecycle**, rather than treated as a separate feature after application development.
 
 ---
 
-## 🔮 Future Improvements
+# 🔮 Future Security Improvements
 
 Potential improvements include:
 
-- Multi-factor authentication
-- Password recovery
-- Role-based access control
-- Enhanced audit logging
-- HTTPS deployment
-- Rate limiting
+- Multi-factor authentication (MFA)
+- Role-Based Access Control (RBAC)
+- Login rate limiting
+- Account lockout policies
 - Email verification
-- Administrative dashboard
-- Automated security testing
-- Docker deployment
+- Password recovery
+- Security audit logging
+- Content Security Policy (CSP)
+- Automated SAST/DAST security testing
+- HTTPS production deployment
+- Dockerised deployment
 - CI/CD security scanning
 
 ---
 
-## 👤 Author
+# 👤 Author
 
 **Vasile Bejan**
 
@@ -340,6 +487,6 @@ GitHub: **vasile007**
 
 ## ⚠️ Disclaimer
 
-This application is a prototype created to demonstrate full-stack web development and secure coding practices.
+FixerUpper is a security-focused prototype designed to demonstrate secure web application development practices.
 
 It is not intended to process real financial transactions or store production customer data.
