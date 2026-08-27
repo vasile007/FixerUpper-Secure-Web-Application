@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title>Circular Saw</title>
+  <desc>Illustration of a circular saw for the FixerUpper product catalogue.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="32" fill="url(#bg)"/>
+  <circle cx="120" cy="100" r="90" fill="#ffffff" opacity="0.06"/>
+  <circle cx="650" cy="400" r="120" fill="#ffffff" opacity="0.05"/>
+  <circle cx="360" cy="210" r="92" fill="#cbd5e1"/>
+  <circle cx="360" cy="210" r="48" fill="#334155"/>
+  <path d="M215 250 L520 250 L575 312 L252 312 Z" fill="#f59e0b"/>
+  <rect x="285" y="150" width="110" height="42" rx="16" fill="#e2e8f0"/>
+  <rect x="470" y="170" width="130" height="38" rx="19" fill="#111827"/>
+  <text x="400" y="408" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#ffffff">Circular Saw</text>
+</svg>

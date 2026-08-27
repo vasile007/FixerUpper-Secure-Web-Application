@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title>Angle Grinder</title>
+  <desc>Illustration of an angle grinder for the FixerUpper product catalogue.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7f1d1d"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="32" fill="url(#bg)"/>
+  <circle cx="130" cy="110" r="100" fill="#ffffff" opacity="0.06"/>
+  <circle cx="660" cy="390" r="140" fill="#ffffff" opacity="0.05"/>
+  <circle cx="365" cy="214" r="84" fill="#cbd5e1"/>
+  <circle cx="365" cy="214" r="40" fill="#475569"/>
+  <rect x="245" y="175" width="140" height="66" rx="20" fill="#f8fafc"/>
+  <rect x="410" y="188" width="190" height="40" rx="20" fill="#111827"/>
+  <rect x="305" y="265" width="120" height="58" rx="24" transform="rotate(30 305 265)" fill="#f59e0b"/>
+  <text x="400" y="408" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="#ffffff">Angle Grinder</text>
+</svg>

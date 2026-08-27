@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title>Safety Equipment</title>
+  <desc>Illustration of safety equipment for the FixerUpper product catalogue.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14532d"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="32" fill="url(#bg)"/>
+  <circle cx="130" cy="100" r="100" fill="#ffffff" opacity="0.06"/>
+  <circle cx="650" cy="400" r="150" fill="#ffffff" opacity="0.05"/>
+  <path d="M400 140 C340 140 300 180 300 240 V280 C300 340 340 390 400 420 C460 390 500 340 500 280 V240 C500 180 460 140 400 140 Z" fill="#f8fafc"/>
+  <path d="M400 180 C365 180 340 205 340 245 V272 C340 310 365 340 400 360 C435 340 460 310 460 272 V245 C460 205 435 180 400 180 Z" fill="#f59e0b"/>
+  <rect x="245" y="245" width="88" height="120" rx="28" fill="#0f172a"/>
+  <rect x="476" y="245" width="88" height="120" rx="28" fill="#0f172a"/>
+  <text x="400" y="408" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="#ffffff">Safety Equipment</text>
+</svg>

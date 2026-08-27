@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title>Power Drill</title>
+  <desc>Illustration of a power drill for the FixerUpper product catalogue.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" rx="32" fill="url(#bg)"/>
+  <circle cx="650" cy="120" r="105" fill="#ffffff" opacity="0.08"/>
+  <rect x="180" y="160" width="520" height="150" rx="75" fill="#f8fafc"/>
+  <rect x="275" y="185" width="175" height="82" rx="22" fill="#1f2937"/>
+  <rect x="560" y="198" width="120" height="30" rx="15" fill="#0f172a"/>
+  <rect x="610" y="170" width="18" height="88" rx="9" fill="#0f172a"/>
+  <rect x="315" y="265" width="112" height="80" rx="18" fill="#f59e0b"/>
+  <text x="400" y="408" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#ffffff">Power Drill</text>
+</svg>
